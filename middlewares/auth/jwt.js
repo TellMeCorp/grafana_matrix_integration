@@ -17,10 +17,7 @@ const getAccessToRoute = (req, res, next) => {
   jwt.verify(accessToken, JWT_SECRET, (err, decoded) => {
     if (err) {
       return next(
-        new CustomError(
-          "Giriş yapmadan burayı göremezsin yanlis" + accessToken,
-          401
-        )
+        new CustomError("Giriş yapmadan burayı göremezsin " + accessToken, 401)
       );
     }
     req.user = {
