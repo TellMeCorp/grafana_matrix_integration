@@ -6,7 +6,7 @@ router.get("/jwks", async (req, res) => {
   const jose = require("node-jose");
   const fs = require("fs");
   const path = require("path");
-  const ks = fs.readFileSync(path.join(__dirname, "Keys.json"));
+  const ks = fs.readFileSync(path.join(__dirname, "../src/Keys.json"));
   const keyStore = await jose.JWK.asKeyStore(ks.toString());
   res.send(keyStore.toJSON());
 });

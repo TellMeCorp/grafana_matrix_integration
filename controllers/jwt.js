@@ -2,6 +2,12 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const CustomError = require("../helpers/errors/CustomError");
+const jwktopem = require("jwk-to-pem");
+const path = require("path");
+const fs = require("fs");
+const JWKeys = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../src/Keys.json"), "utf8")
+);
 const {
   isTokenIncluded,
   getAccessTokenFromHeader,
@@ -19,7 +25,7 @@ const login = asyncHandler(async (req, res, next) => {
     }
   );
   if (r.data["admin"] == true) {
-    sendJwtToClient(name, res);
+    await sendJwtToClient(name, res);
   } else {
     return next(
       new CustomError("Admin girişi yapmadan burayı göremezsin", 401)
@@ -27,22 +33,24 @@ const login = asyncHandler(async (req, res, next) => {
   }
 });
 
-const tokenVerify = (req, res, next) => {
-  const { JWT_SECRET } = process.env;
-  const accessToken = req.body.token || req.query.token;
-  if (!accessToken) {
-    return next(new CustomError("Hatalı Token", 401));
-  }
-  jwt.verify(accessToken, JWT_SECRET, async (err, decoded) => {
-    if (err) {
-      return next(new CustomError("Hatalı Token", 401));
-    }
+const tokenVerify = asyncHandler(async (req, res, next) => {
+  let token = req.body.token || req.query.token;
+  let decodedToken = jwt.decode(token, { complete: true });
+  let kid = decodedToken["header"]["kid"];
+  let keys = JWKeys["keys"][0];
+  console.log(keys);
+
+  const publicKey = jwktopem(keys);
+  try {
+    const decoded = jwt.verify(token, publicKey);
     res.status(200).json({
       success: true,
-      data: { name: decoded.name, token: accessToken },
+      data: { decoded },
     });
-  });
-};
+  } catch (e) {
+    return next(new CustomError(e, 401));
+  }
+});
 
 const loguot = (req, res) => {
   if (!isTokenIncluded(req)) {
