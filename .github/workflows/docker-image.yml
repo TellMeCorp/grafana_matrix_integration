@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ["main"]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: TellMeCorp/grafana_matrix_integration
+
 jobs:
   build:
     runs-on: ubuntu-latest
