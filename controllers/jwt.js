@@ -38,7 +38,6 @@ const tokenVerify = asyncHandler(async (req, res, next) => {
   let decodedToken = jwt.decode(token, { complete: true });
   let kid = decodedToken["header"]["kid"];
   let keys = JWKeys["keys"][0];
-  console.log(keys);
 
   const publicKey = jwktopem(keys);
   try {
