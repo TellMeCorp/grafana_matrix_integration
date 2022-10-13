@@ -1,11 +1,14 @@
 const fs = require("fs").promises;
 const jose = require("node-jose");
-(async () => {
-  const stat = await fs.lstat("../src/Keys.json");
-  if (stat.isFile()) {
-    console.log("has");
-  }
-})().catch((e) => {
+
+try {
+  async () => {
+    const stat = await fs.lstat("../src/Keys.json");
+    if (stat.isFile()) {
+      console.log("has");
+    }
+  };
+} catch (error) {
   const fs = require("fs");
   let keyStore = jose.JWK.createKeyStore();
 
@@ -17,4 +20,4 @@ const jose = require("node-jose");
         JSON.stringify(keyStore.toJSON(true), null, "  ")
       );
     });
-});
+}
