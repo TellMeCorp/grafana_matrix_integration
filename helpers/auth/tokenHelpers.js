@@ -38,6 +38,7 @@ const generateJwtFromUser = async (name) => {
     exp: Math.floor((Date.now() + ms("1d")) / 1000),
     iat: Math.floor(Date.now() / 1000),
     sub: name.split(":")[0].substring(1),
+    name: name.split(":")[0].substring(1).replace(":", " "),
     email: name.replace(":", "@").substring(1),
   });
 
