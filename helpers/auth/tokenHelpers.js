@@ -35,10 +35,10 @@ const generateJwtFromUser = async (name) => {
   const opt = { compact: true, jwk: key, fields: { typ: "jwt" } };
 
   const payload = JSON.stringify({
-    name,
     exp: Math.floor((Date.now() + ms("1d")) / 1000),
     iat: Math.floor(Date.now() / 1000),
-    sub: "test",
+    sub: name.split(":")[0].substring(1),
+    email: name.replace(":", "@").substring(1),
   });
 
   const token = await jose.JWS.createSign(opt, key).update(payload).final();
