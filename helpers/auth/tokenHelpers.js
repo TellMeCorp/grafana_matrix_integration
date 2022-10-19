@@ -40,6 +40,7 @@ const generateJwtFromUser = async (name) => {
     sub: name.split(":")[0].substring(1),
     name: name.split(":")[0].substring(1).replace(":", " "),
     email: name.replace(":", "@").substring(1),
+    nbf: Math.floor(Date.now() / 1000),
   });
 
   const token = await jose.JWS.createSign(opt, key).update(payload).final();
